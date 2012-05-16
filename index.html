@@ -23,10 +23,14 @@
  
 <script>
 
+	var socket = io.connect('http://localhost:8080');
+	var canvas;
+	var context;
+
 	$(document).ready(function(){
 		console.log('hi');
 		
-		var canvas = document.createElement('canvas');
+		canvas = document.createElement('canvas');
 		canvas.width = 500;
 		canvas.height = 500;
 		
@@ -36,11 +40,12 @@
 		// document.getElementById('canvasHolder').appendChild(canvas);
 		$('#canvasHolder').get(0).appendChild(canvas);
 		
-		var context = canvas.getContext('2d');
+		context = canvas.getContext('2d');
 		// context.fillRect(40, 40, 100, 100);
 		
 		context.fillStyle = "rgb(255,0,0)";
-		// context.fillRect(140, 140, 30, 100);
+		context.fillRect(140, 140, 30, 30);
+		
 		
 		$('#canvasHolder').click( function(e) {
 			console.log('ti me les?');
@@ -60,11 +65,14 @@
 			console.log('draaaag');
 			
 			context.fillRect(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, 5, 5);
+			
+			socket.emit('draw', {
+				x: e.pageX - this.offsetLeft,
+				y: e.pageY - this.offsetTop,
+			});
 		});
 	});
 
-	var socket = io.connect('http://localhost:8080');
-	
 	socket.on('connect', function() {
 		var username = $.getUrlVar('username');
 		
@@ -78,6 +86,16 @@
 		}
 		
 	});
+	
+	socket.on('draw', function(data) {
+		console.log('someone is drawing');
+		console.log('dataX: '+data.x);
+		console.log('dataY: '+data.y);
+		
+		context.fillRect(40, 40, 10, 10);
+		context.fillRect(data.x , data.y, 5, 5);
+		context.fillRect(data.x - this.offsetLeft, data.y - this.offsetTop, 5, 5);
+	})
 	
 	socket.on('firstMessage', function(theString) {
 		console.log(theString);

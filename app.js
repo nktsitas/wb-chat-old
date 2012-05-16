@@ -28,5 +28,11 @@ io.sockets.on('connection', function(socket) {
 		
 		socket.broadcast.emit('userJoin', newUsername+' joined.');
 		socket.emit('userJoin', 'successful join! :)');
-	})
+	});
+	
+	socket.on('draw', function(data) {
+		console.log('drawingX: '+data.x);
+		console.log('drawingY: '+data.y);
+		socket.broadcast.emit('draw',data);
+	});
 });

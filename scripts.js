@@ -56,8 +56,7 @@
   	Draw Events
   */
   $('canvas').live('drag dragstart dragend', function(e) {
-  	console.log('huh?');
-    var offset, type, x, y;
+    var offset, type, x, y; 
     type = e.handleObj.type;
     offset = $(this).offset();
     e.offsetX = e.layerX - offset.left;
