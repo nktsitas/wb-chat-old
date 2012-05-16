@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.event.drag-2.0.js"></script>
+ 	<script src="http://localhost:8080/socket.io/socket.io.js"></script>
+<!--     <script src="/socket.io/socket.io.js"></script> -->
+<!-- 	<script type="text/javascript" src="scripts.js"></script> -->
+<!-- <link rel="stylesheet" href="style.css" /> -->
+ 
+    <title>wb-chat</title>
+</head>
+<body>
+    <div id="canvasHolder">
+<!--     	<canvas id="myCanvas" width="500" height="500"></canvas> -->
+    	
+    </div>
+    
+  <!--   <article id="plaka">
+    	alekos
+    </article> -->
+ 
+<script>
+
+	$(document).ready(function(){
+		console.log('hi');
+		
+		var canvas = document.createElement('canvas');
+		canvas.width = 500;
+		canvas.height = 500;
+		
+		var divmwre = document.createElement('div');
+		divmwre.innerHTML = 'sakourtele';
+		
+		// document.getElementById('canvasHolder').appendChild(canvas);
+		$('#canvasHolder').get(0).appendChild(canvas);
+		
+		var context = canvas.getContext('2d');
+		// context.fillRect(40, 40, 100, 100);
+		
+		context.fillStyle = "rgb(255,0,0)";
+		// context.fillRect(140, 140, 30, 100);
+		
+		$('#canvasHolder').click( function(e) {
+			console.log('ti me les?');
+			
+			console.log('pageX: '+e.pageX);
+			console.log('pageX: '+e.pageY);
+			console.log('offsetLeft: '+this.offsetLeft);
+			console.log('offsetTop: '+this.offsetTop);
+			console.log('layerX: '+e.clientY);
+			console.log('layerX: '+e.layerX);
+			console.log('layerY: '+e.layerY);
+			
+			context.fillRect(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, 5, 5);
+		});
+		  
+		$('#canvasHolder').drag( function(e) {
+			console.log('draaaag');
+			
+			context.fillRect(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, 5, 5);
+		});
+	});
+
+	var socket = io.connect('http://localhost:8080');
+	
+	socket.on('connect', function() {
+		var username = $.getUrlVar('username');
+		
+		if (username == undefined) {
+			console.log('no username given.. :(');
+			socket.emit('username','goRandom');
+		}
+		else {
+			console.log('username: '+username);
+			socket.emit('username',username);
+		}
+		
+	});
+	
+	socket.on('firstMessage', function(theString) {
+		console.log(theString);
+	});
+	
+	socket.on('userCount', function(userCount) {
+		console.log('user logged in: '+userCount);
+	});
+	
+	socket.on('userJoin', function(message) {
+		console.log(message);
+	});
+</script>
+
+<script>
+	$.extend({
+		getUrlVars: function(){
+			var vars = [], hash;
+			var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+			
+			for(var i = 0; i < hashes.length; i++)
+			{
+				hash = hashes[i].split('=');
+				vars.push(hash[0]);
+				vars[hash[0]] = hash[1];
+			}
+			
+			return vars;
+		},
+			
+		getUrlVar: function(name){
+			return $.getUrlVars()[name];
+		}
+	});
+</script>
+
+
+</body>
+
+
